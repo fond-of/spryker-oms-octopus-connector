@@ -2,86 +2,156 @@
 
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
-use Generated\Shared\Transfer\AddressTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrder;
-use Orm\Zed\Sales\Persistence\SpySalesOrderAddress;
+use Spryker\Shared\Shipment\ShipmentConstants;
 
 class OctopusOrderMapper implements OctopusOrderMapperInterface
 {
     /**
-     * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $orderEntity
+     * @var \FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderAddressMapperInterface
+     */
+    protected $octopusOrderAddressMapper;
+
+    /**
+     * @var \FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderDiscountItemMapperInterface
+     */
+    protected $octopusOrderDiscountItemMapper;
+
+    /**
+     * @var \FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderShipmentItemMapperInterface
+     */
+    protected $octopusOrderShipmentItemMapper;
+
+    /**
+     * @var \FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderPaymentItemMapperInterface
+     */
+    protected $octopusOrderPaymentItemMapper;
+
+    /**
+     * @param \FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderAddressMapperInterface $octopusOrderAddressMapper
+     * @param \FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderDiscountItemMapperInterface $octopusOrderDiscountItemMapper
+     * @param \FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderShipmentItemMapperInterface $octopusOrderShipmentItemMapper
+     * @param \FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderPaymentItemMapperInterface $octopusOrderPaymentItemMapper
+     */
+    public function __construct(
+        OctopusOrderAddressMapperInterface $octopusOrderAddressMapper,
+        OctopusOrderDiscountItemMapperInterface $octopusOrderDiscountItemMapper,
+        OctopusOrderShipmentItemMapperInterface $octopusOrderShipmentItemMapper,
+        OctopusOrderPaymentItemMapperInterface $octopusOrderPaymentItemMapper
+    ) {
+        $this->octopusOrderAddressMapper = $octopusOrderAddressMapper;
+        $this->octopusOrderDiscountItemMapper = $octopusOrderDiscountItemMapper;
+        $this->octopusOrderShipmentItemMapper = $octopusOrderShipmentItemMapper;
+        $this->octopusOrderPaymentItemMapper = $octopusOrderPaymentItemMapper;
+    }
+
+
+    /**
+     * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
      *
      * @return string
      */
-    public function mapOrderEntityToOctopusOrder(SpySalesOrder $orderEntity): string
+    public function mapSpySalesOrderToOctopusOrder(SpySalesOrder $spySalesOrder): array
     {
-        $orderEntity->getBillingAddress();
+        $octopusOrder = $this->getOctopusOrderHeaderBySpySalesOrder($spySalesOrder);
+
+        $octopusOrder['billing_address'] = $this->octopusOrderAddressMapper
+            ->mapSpySalesOrderAddressToOctopusOrderAddress($spySalesOrder->getBillingAddress());
+        $octopusOrder['shipping_address'] = $this->octopusOrderAddressMapper
+            ->mapSpySalesOrderAddressToOctopusOrderAddress($spySalesOrder->getShippingAddress());
+
+        $octopusOrder['shipment_item'] = $this->getOctopusOrderShipmentItemBySpySalesOrder($spySalesOrder);
+        $octopusOrder['discount_items'] = $this->getOctopusOrderDiscountItemsBySpySalesOrder($spySalesOrder);
+        $octopusOrder['payment_item'] = $this->getOctopusOrderPaymentItemBySpySalesOrder($spySalesOrder);
+
+        return $octopusOrder;
     }
 
-    protected function mapOrderAddressEntityToOctopusOrderAddress(SpySalesOrderAddress $orderAddressEntity): array {
-        $octopusOrderAddress = [];
+    /**
+     * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
+     *
+     * @return array
+     */
+    protected function getOctopusOrderHeaderBySpySalesOrder(SpySalesOrder $spySalesOrder): array
+    {
+        $octopusOrderHeader = [];
 
-        $octopusOrderAddress['id_sales_order_address'] = $orderAddressEntity->getIdSalesOrderAddress();
-        $octopusOrderAddress['email'] = $orderAddressEntity->getEmail();
-        $octopusOrderAddress['salutation'] = $orderAddressEntity->getSalutation();
-        $octopusOrderAddress['first_name'] = $orderAddressEntity->getFirstName();
-        $octopusOrderAddress['middle_name'] = $orderAddressEntity->getMiddleName();
-        $octopusOrderAddress['last_name'] = $orderAddressEntity->getLastName();
-        $octopusOrderAddress['address1'] = $orderAddressEntity->getAddress1();
-        $octopusOrderAddress['address2'] = $orderAddressEntity->getAddress2();
-        $octopusOrderAddress['address3'] = $orderAddressEntity->getAddress3();
-        $octopusOrderAddress['additional_address'] = $orderAddressEntity->getAdditionalAddress();
-        $octopusOrderAddress['city'] = $orderAddressEntity->getCity();
-        $octopusOrderAddress['zip_code'] = $orderAddressEntity->getZipCode();
-        $octopusOrderAddress['phone'] = $orderAddressEntity->getPhone();
-        $octopusOrderAddress['cell_phone'] = $orderAddressEntity->getCellPhone();
-        $octopusOrderAddress['country_iso_code'] = $orderAddressEntity->getCountry()->getIso2Code();
+        $octopusOrderHeader['test'] = $spySalesOrder->getIsTest();
+        $octopusOrderHeader['is_test'] = $spySalesOrder->getIsTest();
+        $octopusOrderHeader['created_at'] = $spySalesOrder->getCreatedAt();
+        $octopusOrderHeader['updated_at'] = $spySalesOrder->getUpdatedAt();
+        $octopusOrderHeader['id_sales_order'] = $spySalesOrder->getIdSalesOrder();
+        $octopusOrderHeader['customer_reference'] = $spySalesOrder->getCustomerReference();
+        $octopusOrderHeader['order_reference'] = $spySalesOrder->getOrderReference();
+        $octopusOrderHeader['currency_iso_code'] = $spySalesOrder->getCurrencyIsoCode();
+        $octopusOrderHeader['language_code'] = $spySalesOrder->getLocale()->getLocaleName();
+        $octopusOrderHeader['price_mode'] = $spySalesOrder->getPriceMode();
+        $octopusOrderHeader['store'] = $spySalesOrder->getStore();
+        $octopusOrderHeader['email'] = $spySalesOrder->getEmail();
+        $octopusOrderHeader['salutation'] = $spySalesOrder->getSalutation();
+        $octopusOrderHeader['first_name'] = $spySalesOrder->getFirstName();
+        $octopusOrderHeader['last_name'] = $spySalesOrder->getLastName();
 
-        return $octopusOrderAddress;
+
+        return $octopusOrderHeader;
     }
+
+    /**
+     * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
+     *
+     * @return array
+     */
+    protected function getOctopusOrderShipmentItemBySpySalesOrder(SpySalesOrder $spySalesOrder): array
+    {
+        foreach ($spySalesOrder->getExpenses() as $spySalesExpense) {
+            if ($spySalesExpense->getType() !== ShipmentConstants::SHIPMENT_EXPENSE_TYPE) {
+                continue;
+            }
+
+            return $this->octopusOrderShipmentItemMapper
+                        ->mapSpySalesExpenseToOctopusOrderShipmentItem($spySalesExpense);
+        }
+    }
+
+    /**
+     * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
+     *
+     * @return array
+     */
+    protected function getOctopusOrderDiscountItemsBySpySalesOrder(SpySalesOrder $spySalesOrder): array
+    {
+        $octopusOrderDiscountItems = [];
+
+        foreach ($spySalesOrder->getDiscounts() as $spySalesDiscount) {
+            $octopusOrderDiscountItems[] = $this->octopusOrderDiscountItemMapper
+                ->mapSpySalesDiscountToOctopusOrderDiscountItem($spySalesDiscount);
+        }
+
+        return $octopusOrderDiscountItems;
+    }
+
+    /**
+     * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
+     *
+     * @return array
+     */
+    protected function getOctopusOrderPaymentItemBySpySalesOrder(SpySalesOrder $spySalesOrder): array
+    {
+        $spySalesPayment = $spySalesOrder->getOrdersJoinSalesPaymentMethodType()->getFirst();
+
+        return $this->octopusOrderPaymentItemMapper->mapSpySalesPaymentToOctopusOrderPaymentItem($spySalesPayment);
+    }
+
 
     /**
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
      * @return string
      */
-    public function mapOrderTransferToOctopusOrder(OrderTransfer $orderTransfer): string
+    public function mapOrderTransferToOctopusOrder(OrderTransfer $orderTransfer): array
     {
-        $octopusOrder['billing_address'] = $this->mapAddressTransferToOctopusOrderAddress(
-            $orderTransfer->getBillingAddress()
-        );
-
-        $octopusOrder['shipping_address'] = $this->mapAddressTransferToOctopusOrderAddress(
-            $orderTransfer->getShippingAddress()
-        );
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\AddressTransfer $addressTransfer
-     *
-     * @return array
-     */
-    protected function mapAddressTransferToOctopusOrderAddress(AddressTransfer $addressTransfer): array
-    {
-        $octopusOrderAddress = [];
-
-        $octopusOrderAddress['id_sales_order_address'] = $addressTransfer->getIdSalesOrderAddress();
-        $octopusOrderAddress['email'] = $addressTransfer->getEmail();
-        $octopusOrderAddress['salutation'] = $addressTransfer->getSalutation();
-        $octopusOrderAddress['first_name'] = $addressTransfer->getFirstName();
-        $octopusOrderAddress['middle_name'] = $addressTransfer->getMiddleName();
-        $octopusOrderAddress['last_name'] = $addressTransfer->getLastName();
-        $octopusOrderAddress['address1'] = $addressTransfer->getAddress1();
-        $octopusOrderAddress['address2'] = $addressTransfer->getAddress2();
-        $octopusOrderAddress['address3'] = $addressTransfer->getAddress3();
-        $octopusOrderAddress['additional_address'] = $addressTransfer->getAdditionalAddress();
-        $octopusOrderAddress['city'] = $addressTransfer->getCity();
-        $octopusOrderAddress['zip_code'] = $addressTransfer->getZipCode();
-        $octopusOrderAddress['phone'] = $addressTransfer->getPhone();
-        $octopusOrderAddress['cell_phone'] = $addressTransfer->getCellPhone();
-        $octopusOrderAddress['country_iso_code'] = $addressTransfer->getCountry()->getIso2Code();
-
-        return $octopusOrderAddress;
+        $orderTransfer->getPayments();
+        return [];
     }
 }

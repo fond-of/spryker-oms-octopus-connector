@@ -8,16 +8,16 @@ use Orm\Zed\Sales\Persistence\SpySalesOrder;
 interface OctopusOrderMapperInterface
 {
     /**
-     * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $orderEntity
+     * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
      *
-     * @return string
+     * @return array
      */
-    public function mapOrderEntityToOctopusOrder(SpySalesOrder $orderEntity): string;
+    public function mapSpySalesOrderToOctopusOrder(SpySalesOrder $spySalesOrder): array;
 
     /**
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
-     * @return string
+     * @return array
      */
-    public function mapOrderTransferToOctopusOrder(OrderTransfer $orderTransfer): string;
+    public function mapOrderTransferToOctopusOrder(OrderTransfer $orderTransfer): array;
 }

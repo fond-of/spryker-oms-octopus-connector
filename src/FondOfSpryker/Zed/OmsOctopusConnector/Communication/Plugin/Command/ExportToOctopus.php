@@ -7,6 +7,9 @@ use Spryker\Zed\Oms\Business\Util\ReadOnlyArrayObject;
 use Spryker\Zed\Oms\Communication\Plugin\Oms\Command\AbstractCommand;
 use Spryker\Zed\Oms\Dependency\Plugin\Command\CommandByOrderInterface;
 
+/**
+ * @method \FondOfSpryker\Zed\OmsOctopusConnector\Business\OmsOctopusConnectorFacadeInterface getFacade()
+ */
 class ExportToOctopus extends AbstractCommand implements CommandByOrderInterface
 {
     /**
@@ -18,6 +21,8 @@ class ExportToOctopus extends AbstractCommand implements CommandByOrderInterface
      */
     public function run(array $orderItems, SpySalesOrder $orderEntity, ReadOnlyArrayObject $data)
     {
-        
+        $this->getFacade()->exportOrder($orderEntity, $orderItems);
+
+        return [];
     }
 }
