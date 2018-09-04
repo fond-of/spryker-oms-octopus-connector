@@ -3,6 +3,7 @@
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
 use Generated\Shared\Transfer\ItemTransfer;
+use Generated\Shared\Transfer\OctopusOrderItemTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrderItem;
 
 class OctopusOrderItemMapper implements OctopusOrderItemMapperInterface
@@ -10,29 +11,29 @@ class OctopusOrderItemMapper implements OctopusOrderItemMapperInterface
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrderItem $spySalesOrderItem
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderItemTransfer
      */
-    public function mapSpySalesOrderItemEntityToOctopusOrderItem(SpySalesOrderItem $spySalesOrderItem): array
+    public function mapSpySalesOrderItemEntityToOctopusOrderItem(SpySalesOrderItem $spySalesOrderItem): OctopusOrderItemTransfer
     {
-        $octopusOrderItem = [];
+        $octopusOrderItem = new OctopusOrderItemTransfer();
 
-        $octopusOrderItem['sku'] = $spySalesOrderItem->getSku();
-        $octopusOrderItem['name'] = $spySalesOrderItem->getName();
-        $octopusOrderItem['quantity'] = $spySalesOrderItem->getQuantity();
-        $octopusOrderItem['price'] = $spySalesOrderItem->getPrice();
-        $octopusOrderItem['gross_price'] = $spySalesOrderItem->getGrossPrice();
-        $octopusOrderItem['net_price'] = $spySalesOrderItem->getNetPrice();
-        $octopusOrderItem['tax_amount'] = $spySalesOrderItem->getTaxAmount();
-        $octopusOrderItem['tax_amount_full_aggregation'] = $spySalesOrderItem->getTaxAmountFullAggregation();
-        $octopusOrderItem['tax_rate'] = $spySalesOrderItem->getTaxRate();
-        $octopusOrderItem['tax_rate_average_aggregation'] = $spySalesOrderItem->getTaxRateAverageAggregation();
-        $octopusOrderItem['refundable_amount'] = $spySalesOrderItem->getRefundableAmount();
-        $octopusOrderItem['discount_amount_aggregation'] = $spySalesOrderItem->getDiscountAmountAggregation();
-        $octopusOrderItem['discount_amount_full_aggregation'] = $spySalesOrderItem->getDiscountAmountFullAggregation();
-        $octopusOrderItem['subtotal_aggregation'] = $spySalesOrderItem->getSubtotalAggregation();
-        $octopusOrderItem['price_to_pay_aggregation'] = $spySalesOrderItem->getPriceToPayAggregation();
-        $octopusOrderItem['product_option_price_aggregation'] = $spySalesOrderItem->getProductOptionPriceAggregation();
-        $octopusOrderItem['group_key'] = $spySalesOrderItem->getGroupKey();
+        $octopusOrderItem->setSku($spySalesOrderItem->getSku());
+        $octopusOrderItem->setName($spySalesOrderItem->getName());
+        $octopusOrderItem->setQuantity($spySalesOrderItem->getQuantity());
+        $octopusOrderItem->setPrice($spySalesOrderItem->getPrice());
+        $octopusOrderItem->setGrossPrice($spySalesOrderItem->getGrossPrice());
+        $octopusOrderItem->setNetPrice($spySalesOrderItem->getNetPrice());
+        $octopusOrderItem->setTaxAmount($spySalesOrderItem->getTaxAmount());
+        $octopusOrderItem->setTaxAmountFullAggregation($spySalesOrderItem->getTaxAmountFullAggregation());
+        $octopusOrderItem->setTaxRate($spySalesOrderItem->getTaxRate());
+        $octopusOrderItem->setTaxRateAverageAggregation($spySalesOrderItem->getTaxRateAverageAggregation());
+        $octopusOrderItem->setRefundableAmount($spySalesOrderItem->getRefundableAmount());
+        $octopusOrderItem->setDiscountAmountAggregation($spySalesOrderItem->getDiscountAmountAggregation());
+        $octopusOrderItem->setDiscountAmountFullAggregation($spySalesOrderItem->getDiscountAmountFullAggregation());
+        $octopusOrderItem->setSubtotalAggregation($spySalesOrderItem->getSubtotalAggregation());
+        $octopusOrderItem->setPriceToPayAggregation($spySalesOrderItem->getPriceToPayAggregation());
+        $octopusOrderItem->setProductOptionPriceAggregation($spySalesOrderItem->getProductOptionPriceAggregation());
+        $octopusOrderItem->setGroupKey($spySalesOrderItem->getGroupKey());
 
         return $octopusOrderItem;
     }
@@ -40,30 +41,29 @@ class OctopusOrderItemMapper implements OctopusOrderItemMapperInterface
     /**
      * @param \Generated\Shared\Transfer\ItemTransfer $itemTransfer
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderItemTransfer
      */
-    public function mapItemTransferToOctopusOrderItem(ItemTransfer $itemTransfer): array
+    public function mapItemTransferToOctopusOrderItem(ItemTransfer $itemTransfer): OctopusOrderItemTransfer
     {
-        $octopusOrderItem = [];
+        $octopusOrderItem = new OctopusOrderItemTransfer();
 
-        $octopusOrderItem['id_sales_order_item'] = $itemTransfer->getIdSalesOrderItem();
-        $octopusOrderItem['sku'] = $itemTransfer->getSku();
-        $octopusOrderItem['name'] = $itemTransfer->getName();
-        $octopusOrderItem['quantity'] = $itemTransfer->getQuantity();
-        $octopusOrderItem['price'] = $itemTransfer->getUnitPrice();
-        $octopusOrderItem['gross_price'] = $itemTransfer->getUnitGrossPrice();
-        $octopusOrderItem['net_price'] = $itemTransfer->getUnitNetPrice();
-        $octopusOrderItem['tax_amount'] = $itemTransfer->getUnitTaxAmount();
-        $octopusOrderItem['tax_amount_full_aggregation'] = $itemTransfer->getUnitTaxAmountFullAggregation();
-        $octopusOrderItem['tax_rate'] = $itemTransfer->getTaxRate();
-        $octopusOrderItem['tax_rate_average_aggregation'] = $itemTransfer->getTaxRateAverageAggregation();
-        $octopusOrderItem['refundable_amount'] = $itemTransfer->getRefundableAmount();
-        $octopusOrderItem['discount_amount_aggregation'] = $itemTransfer->getUnitDiscountAmountAggregation();
-        $octopusOrderItem['discount_amount_full_aggregation'] = $itemTransfer->getUnitDiscountAmountFullAggregation();
-        $octopusOrderItem['subtotal_aggregation'] = $itemTransfer->getUnitSubtotalAggregation();
-        $octopusOrderItem['price_to_pay_aggregation'] = $itemTransfer->getUnitPriceToPayAggregation();
-        $octopusOrderItem['product_option_price_aggregation'] = $itemTransfer->getUnitProductOptionPriceAggregation();
-        $octopusOrderItem['group_key'] = $itemTransfer->getGroupKey();
+        $octopusOrderItem->setSku($itemTransfer->getSku());
+        $octopusOrderItem->setName($itemTransfer->getName());
+        $octopusOrderItem->setQuantity($itemTransfer->getQuantity());
+        $octopusOrderItem->setPrice($itemTransfer->getUnitPrice());
+        $octopusOrderItem->setGrossPrice($itemTransfer->getUnitGrossPrice());
+        $octopusOrderItem->setNetPrice($itemTransfer->getUnitNetPrice());
+        $octopusOrderItem->setTaxAmount($itemTransfer->getUnitTaxAmount());
+        $octopusOrderItem->setTaxAmountFullAggregation($itemTransfer->getUnitTaxAmountFullAggregation());
+        $octopusOrderItem->setTaxRate($itemTransfer->getTaxRate());
+        $octopusOrderItem->setTaxRateAverageAggregation($itemTransfer->getTaxRateAverageAggregation());
+        $octopusOrderItem->setRefundableAmount($itemTransfer->getRefundableAmount());
+        $octopusOrderItem->setDiscountAmountAggregation($itemTransfer->getUnitDiscountAmountAggregation());
+        $octopusOrderItem->setDiscountAmountFullAggregation($itemTransfer->getUnitDiscountAmountFullAggregation());
+        $octopusOrderItem->setSubtotalAggregation($itemTransfer->getUnitSubtotalAggregation());
+        $octopusOrderItem->setPriceToPayAggregation($itemTransfer->getUnitPriceToPayAggregation());
+        $octopusOrderItem->setProductOptionPriceAggregation($itemTransfer->getUnitProductOptionPriceAggregation());
+        $octopusOrderItem->setGroupKey($itemTransfer->getGroupKey());
 
         return $octopusOrderItem;
     }

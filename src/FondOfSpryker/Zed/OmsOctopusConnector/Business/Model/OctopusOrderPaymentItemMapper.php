@@ -2,27 +2,30 @@
 
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
+use Generated\Shared\Transfer\OctopusOrderPaymentItemTransfer;
+use Generated\Shared\Transfer\OctopusOrderPaymentMethodTypeTransfer;
 use Generated\Shared\Transfer\PaymentTransfer;
 use Orm\Zed\Payment\Persistence\SpySalesPayment;
 
 class OctopusOrderPaymentItemMapper implements OctopusOrderPaymentItemMapperInterface
 {
-
     /**
      * @param \Orm\Zed\Payment\Persistence\SpySalesPayment $spySalesPayment
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderPaymentItemTransfer
      */
-    public function mapSpySalesPaymentToOctopusOrderPaymentItem(SpySalesPayment $spySalesPayment): array
+    public function mapSpySalesPaymentToOctopusOrderPaymentItem(SpySalesPayment $spySalesPayment): OctopusOrderPaymentItemTransfer
     {
-        $octopusPaymentItem = [];
+        $octopusPaymentItem = new OctopusOrderPaymentItemTransfer();
+        $octopusPaymentMethodType = new OctopusOrderPaymentMethodTypeTransfer();
 
-        $octopusPaymentItem['id_sales_payment'] = $spySalesPayment->getIdSalesPayment();
-        $octopusPaymentItem['amount'] = $spySalesPayment->getAmount();
-        $octopusPaymentItem['sales_payment_method_type'] = [
-            'payment_provider' => $spySalesPayment->getSalesPaymentMethodType()->getPaymentProvider(),
-            'payment_method' => $spySalesPayment->getSalesPaymentMethodType()->getPaymentMethod(),
-        ];
+        $spySalesPaymentMethodType = $spySalesPayment->getSalesPaymentMethodType();
+        $octopusPaymentMethodType->setPaymentMethod($spySalesPaymentMethodType->getPaymentMethod());
+        $octopusPaymentMethodType->setPaymentProvider($spySalesPaymentMethodType->getPaymentProvider());
+
+        $octopusPaymentItem->setIdSalesPayment($spySalesPayment->getIdSalesPayment());
+        $octopusPaymentItem->setAmount($spySalesPayment->getAmount());
+        $octopusPaymentItem->setSalesPaymentMethodType($octopusPaymentMethodType);
 
         return $octopusPaymentItem;
     }
@@ -30,18 +33,19 @@ class OctopusOrderPaymentItemMapper implements OctopusOrderPaymentItemMapperInte
     /**
      * @param \Generated\Shared\Transfer\PaymentTransfer $paymentTransfer
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderPaymentItemTransfer
      */
-    public function mapPaymentTransferToOctopusOrderPaymentItem(PaymentTransfer $paymentTransfer): array
+    public function mapPaymentTransferToOctopusOrderPaymentItem(PaymentTransfer $paymentTransfer): OctopusOrderPaymentItemTransfer
     {
-        $octopusPaymentItem = [];
+        $octopusPaymentItem = new OctopusOrderPaymentItemTransfer();
+        $octopusPaymentMethodType = new OctopusOrderPaymentMethodTypeTransfer();
 
-        $octopusPaymentItem['id_sales_payment'] = $paymentTransfer->getIdSalesPayment();
-        $octopusPaymentItem['amount'] = $paymentTransfer->getAmount();
-        $octopusPaymentItem['sales_payment_method_type'] = [
-            'payment_provider' => $paymentTransfer->getPaymentProvider(),
-            'payment_method' => $paymentTransfer->getPaymentMethod(),
-        ];
+        $octopusPaymentMethodType->setPaymentMethod($paymentTransfer->getPaymentMethod());
+        $octopusPaymentMethodType->setPaymentProvider($paymentTransfer->getPaymentProvider());
+
+        $octopusPaymentItem->setIdSalesPayment($paymentTransfer->getIdSalesPayment());
+        $octopusPaymentItem->setAmount($paymentTransfer->getAmount());
+        $octopusPaymentItem->setSalesPaymentMethodType($octopusPaymentMethodType);
 
         return $octopusPaymentItem;
     }

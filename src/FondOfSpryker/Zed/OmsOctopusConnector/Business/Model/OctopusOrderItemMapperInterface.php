@@ -3,6 +3,7 @@
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
 use Generated\Shared\Transfer\ItemTransfer;
+use Generated\Shared\Transfer\OctopusOrderItemTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrderItem;
 
 interface OctopusOrderItemMapperInterface
@@ -10,14 +11,14 @@ interface OctopusOrderItemMapperInterface
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrderItem $spySalesOrderItem
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderItemTransfer
      */
-    public function mapSpySalesOrderItemEntityToOctopusOrderItem(SpySalesOrderItem $spySalesOrderItem): array;
+    public function mapSpySalesOrderItemEntityToOctopusOrderItem(SpySalesOrderItem $spySalesOrderItem): OctopusOrderItemTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\ItemTransfer $itemTransfer
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderItemTransfer
      */
-    public function mapItemTransferToOctopusOrderItem(ItemTransfer $itemTransfer): array;
+    public function mapItemTransferToOctopusOrderItem(ItemTransfer $itemTransfer): OctopusOrderItemTransfer;
 }

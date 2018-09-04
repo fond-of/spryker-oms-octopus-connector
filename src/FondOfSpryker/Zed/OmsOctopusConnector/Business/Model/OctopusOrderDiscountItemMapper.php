@@ -3,6 +3,7 @@
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
 use Generated\Shared\Transfer\CalculatedDiscountTransfer;
+use Generated\Shared\Transfer\OctopusOrderDiscountItemTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesDiscount;
 
 class OctopusOrderDiscountItemMapper implements OctopusOrderDiscountItemMapperInterface
@@ -10,16 +11,16 @@ class OctopusOrderDiscountItemMapper implements OctopusOrderDiscountItemMapperIn
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesDiscount $spySalesDiscount
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderDiscountItemTransfer
      */
     public function mapSpySalesDiscountToOctopusOrderDiscountItem(
         SpySalesDiscount $spySalesDiscount
-    ): array {
-        $octopusOrderDiscountItem = [];
+    ): OctopusOrderDiscountItemTransfer {
+        $octopusOrderDiscountItem = new OctopusOrderDiscountItemTransfer();
 
-        $octopusOrderDiscountItem['description'] = $spySalesDiscount->getDescription();
-        $octopusOrderDiscountItem['display_name'] = $spySalesDiscount->getDisplayName();
-        $octopusOrderDiscountItem['amount'] = $spySalesDiscount->getAmount();
+        $octopusOrderDiscountItem->setDescription($spySalesDiscount->getDescription());
+        $octopusOrderDiscountItem->setDisplayName($spySalesDiscount->getDisplayName());
+        $octopusOrderDiscountItem->setAmount($spySalesDiscount->getAmount());
 
         return $octopusOrderDiscountItem;
     }
@@ -27,16 +28,16 @@ class OctopusOrderDiscountItemMapper implements OctopusOrderDiscountItemMapperIn
     /**
      * @param \Generated\Shared\Transfer\CalculatedDiscountTransfer $calculatedDiscountTransfer
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderDiscountItemTransfer
      */
     public function mapCalculatedDiscountTransferToOctopusOrderDiscountItem(
         CalculatedDiscountTransfer $calculatedDiscountTransfer
-    ): array {
-        $octopusOrderDiscountItem = [];
+    ): OctopusOrderDiscountItemTransfer {
+        $octopusOrderDiscountItem = new OctopusOrderDiscountItemTransfer();
 
-        $octopusOrderDiscountItem['description'] = $calculatedDiscountTransfer->getDescription();
-        $octopusOrderDiscountItem['display_name'] = $calculatedDiscountTransfer->getDisplayName();
-        $octopusOrderDiscountItem['amount'] = $calculatedDiscountTransfer->getUnitAmount();
+        $octopusOrderDiscountItem->setDescription($calculatedDiscountTransfer->getDescription());
+        $octopusOrderDiscountItem->setDisplayName($calculatedDiscountTransfer->getDisplayName());
+        $octopusOrderDiscountItem->setAmount($calculatedDiscountTransfer->getUnitAmount());
 
         return $octopusOrderDiscountItem;
     }

@@ -3,6 +3,7 @@
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
 use Generated\Shared\Transfer\ExpenseTransfer;
+use Generated\Shared\Transfer\OctopusOrderShipmentItemTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesExpense;
 
 class OctopusOrderShipmentItemMapper implements OctopusOrderShipmentItemMapperInterface
@@ -10,21 +11,21 @@ class OctopusOrderShipmentItemMapper implements OctopusOrderShipmentItemMapperIn
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesExpense $spySalesExpense
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderShipmentItemTransfer
      */
-    public function mapSpySalesExpenseToOctopusOrderShipmentItem(SpySalesExpense $spySalesExpense): array
+    public function mapSpySalesExpenseToOctopusOrderShipmentItem(SpySalesExpense $spySalesExpense): OctopusOrderShipmentItemTransfer
     {
-        $octopusOrderShipmentItem = [];
+        $octopusOrderShipmentItem = new OctopusOrderShipmentItemTransfer();
 
-        $octopusOrderShipmentItem['id_sales_expense'] = $spySalesExpense->getIdSalesExpense();
-        $octopusOrderShipmentItem['name'] = $spySalesExpense->getName();
-        $octopusOrderShipmentItem['gross_price'] = $spySalesExpense->getGrossPrice();
-        $octopusOrderShipmentItem['net_price'] = $spySalesExpense->getNetPrice();
-        $octopusOrderShipmentItem['price'] = $spySalesExpense->getPrice();
-        $octopusOrderShipmentItem['tax_rate'] = $spySalesExpense->getTaxRate();
-        $octopusOrderShipmentItem['tax_amount'] = $spySalesExpense->getTaxAmount();
-        $octopusOrderShipmentItem['refundable_amount'] = $spySalesExpense->getRefundableAmount();
-        $octopusOrderShipmentItem['price_to_pay_aggregation'] = $spySalesExpense->getPriceToPayAggregation();
+        $octopusOrderShipmentItem->setIdSalesExpense($spySalesExpense->getIdSalesExpense());
+        $octopusOrderShipmentItem->setName($spySalesExpense->getName());
+        $octopusOrderShipmentItem->setGrossPrice($spySalesExpense->getGrossPrice());
+        $octopusOrderShipmentItem->setNetPrice($spySalesExpense->getNetPrice());
+        $octopusOrderShipmentItem->setPrice($spySalesExpense->getPrice());
+        $octopusOrderShipmentItem->setTaxRate($spySalesExpense->getTaxRate());
+        $octopusOrderShipmentItem->setTaxAmount($spySalesExpense->getTaxAmount());
+        $octopusOrderShipmentItem->setRefundableAmount($spySalesExpense->getRefundableAmount());
+        $octopusOrderShipmentItem->setPriceToPayAggregation($spySalesExpense->getPriceToPayAggregation());
 
         return $octopusOrderShipmentItem;
     }
@@ -32,21 +33,21 @@ class OctopusOrderShipmentItemMapper implements OctopusOrderShipmentItemMapperIn
     /**
      * @param \Generated\Shared\Transfer\ExpenseTransfer $expenseTransfer
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderShipmentItemTransfer
      */
-    public function mapExpenseTransferToOctopusOrderShipmentItem(ExpenseTransfer $expenseTransfer): array
+    public function mapExpenseTransferToOctopusOrderShipmentItem(ExpenseTransfer $expenseTransfer): OctopusOrderShipmentItemTransfer
     {
-        $octopusOrderShipmentItem = [];
+        $octopusOrderShipmentItem = new OctopusOrderShipmentItemTransfer();
 
-        $octopusOrderShipmentItem['id_sales_expense'] = $expenseTransfer->getIdSalesExpense();
-        $octopusOrderShipmentItem['name'] = $expenseTransfer->getName();
-        $octopusOrderShipmentItem['gross_price'] = $expenseTransfer->getUnitGrossPrice();
-        $octopusOrderShipmentItem['net_price'] = $expenseTransfer->getUnitNetPrice();
-        $octopusOrderShipmentItem['price'] = $expenseTransfer->getUnitPrice();
-        $octopusOrderShipmentItem['tax_rate'] = $expenseTransfer->getTaxRate();
-        $octopusOrderShipmentItem['tax_amount'] = $expenseTransfer->getUnitTaxAmount();
-        $octopusOrderShipmentItem['refundable_amount'] = $expenseTransfer->getRefundableAmount();
-        $octopusOrderShipmentItem['price_to_pay_aggregation'] = $expenseTransfer->getUnitPriceToPayAggregation();
+        $octopusOrderShipmentItem->setIdSalesExpense($expenseTransfer->getIdSalesExpense());
+        $octopusOrderShipmentItem->setName($expenseTransfer->getName());
+        $octopusOrderShipmentItem->setGrossPrice($expenseTransfer->getUnitGrossPrice());
+        $octopusOrderShipmentItem->setNetPrice($expenseTransfer->getUnitNetPrice());
+        $octopusOrderShipmentItem->setPrice($expenseTransfer->getUnitPrice());
+        $octopusOrderShipmentItem->setTaxRate($expenseTransfer->getTaxRate());
+        $octopusOrderShipmentItem->setTaxAmount($expenseTransfer->getUnitTaxAmount());
+        $octopusOrderShipmentItem->setRefundableAmount($expenseTransfer->getRefundableAmount());
+        $octopusOrderShipmentItem->setPriceToPayAggregation($expenseTransfer->getUnitPriceToPayAggregation());
 
         return $octopusOrderShipmentItem;
     }

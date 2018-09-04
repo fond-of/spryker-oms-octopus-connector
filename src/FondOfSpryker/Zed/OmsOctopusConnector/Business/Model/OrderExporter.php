@@ -4,6 +4,7 @@ namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
 use FondOfSpryker\Zed\OmsOctopusConnector\Business\Api\Adapter\AdapterInterface;
 use FondOfSpryker\Zed\OmsOctopusConnector\Dependency\Facade\OmsOctopusConnectorToSalesInterface;
+use Generated\Shared\Transfer\OctopusOrderRequestTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrder;
 
 class OrderExporter implements OrderExporterInterface
@@ -54,15 +55,36 @@ class OrderExporter implements OrderExporterInterface
      */
     public function export(SpySalesOrder $spySalesOrder, array $spySalesOrderItems): void
     {
-        $octopusOrder = $this->octopusOrderMapper->mapSpySalesOrderToOctopusOrder($spySalesOrder);
-        $octopusOrder['order_items'] = [];
+        $octopusOrderItems = [];
+        $groupKeyItemMapping = [];
 
         foreach ($spySalesOrderItems as $orderItem) {
-            $octopusOrder['order_items'][] = $this->octopusOrderItemMapper
-                ->mapSpySalesOrderItemEntityToOctopusOrderItem($orderItem);
+            if (!\array_key_exists($orderItem->getGroupKey(), $groupKeyItemMapping)) {
+                $octopusOrderItems[] = $this->octopusOrderItemMapper
+                    ->mapSpySalesOrderItemEntityToOctopusOrderItem($orderItem);
+
+                $groupKeyItemMapping[$orderItem->getGroupKey()] = count($octopusOrderItems) - 1;
+
+                continue;
+            }
+
+            $octopusOrderItem = $octopusOrderItems[$groupKeyItemMapping[$orderItem->getGroupKey()]];
+
+            $octopusOrderItem->setQuantity($octopusOrderItem->getQuantity() + $orderItem->getQuantity());
+            $octopusOrderItem->setSubtotalAggregation($octopusOrderItem->getSubtotalAggregation() + $orderItem->getSubtotalAggregation());
+            $octopusOrderItem->setTaxAmountFullAggregation($octopusOrderItem->getTaxAmountFullAggregation() + $orderItem->getTaxAmountFullAggregation());
+            $octopusOrderItem->setPriceToPayAggregation($octopusOrderItem->getPriceToPayAggregation() + $orderItem->getPriceToPayAggregation());
+            $octopusOrderItem->setDiscountAmountFullAggregation($octopusOrderItem->getDiscountAmountFullAggregation() + $orderItem->getDiscountAmountFullAggregation());
         }
 
-        // TODO: send to octopus;
+        $octopusOrder = $this->octopusOrderMapper->mapSpySalesOrderToOctopusOrder($spySalesOrder);
+        $octopusOrder->setOrderItems($octopusOrderItems);
+
+        $octopusOrderRequest = new OctopusOrderRequestTransfer();
+
+        $octopusOrderRequest->setBody($octopusOrder);
+
+        $this->apiAdapter->sendRequest($octopusOrderRequest);
     }
 
     /**
@@ -74,14 +96,35 @@ class OrderExporter implements OrderExporterInterface
     {
         $orderTransfer = $this->salesFacade->getOrderByIdSalesOrder($idSalesOrder);
 
-        $octopusOrder = $this->octopusOrderMapper->mapOrderTransferToOctopusOrder($orderTransfer);
-        $octopusOrder['order_items'] = [];
+        $octopusOrderItems = [];
+        $groupKeyItemMapping = [];
 
-        foreach ($orderTransfer->getItems() as $itemTransfer) {
-            $octopusOrder['order_items'][] = $this->octopusOrderItemMapper
-                ->mapItemTransferToOctopusOrderItem($itemTransfer);
+        foreach ($orderTransfer->getItems() as $orderItem) {
+            if (!\array_key_exists($orderItem->getGroupKey(), $groupKeyItemMapping)) {
+                $octopusOrderItems[] = $this->octopusOrderItemMapper
+                    ->mapSpySalesOrderItemEntityToOctopusOrderItem($orderItem);
+
+                $groupKeyItemMapping[$orderItem->getGroupKey()] = count($octopusOrderItems) - 1;
+
+                continue;
+            }
+
+            $octopusOrderItem = $octopusOrderItems[$groupKeyItemMapping[$orderItem->getGroupKey()]];
+
+            $octopusOrderItem->setQuantity($octopusOrderItem->getQuantity() + $orderItem->getQuantity());
+            $octopusOrderItem->setSubtotalAggregation($octopusOrderItem->getSubtotalAggregation() + $orderItem->getSubtotalAggregation());
+            $octopusOrderItem->setTaxAmountFullAggregation($octopusOrderItem->getTaxAmountFullAggregation() + $orderItem->getTaxAmountFullAggregation());
+            $octopusOrderItem->setPriceToPayAggregation($octopusOrderItem->getPriceToPayAggregation() + $orderItem->getPriceToPayAggregation());
+            $octopusOrderItem->setDiscountAmountFullAggregation($octopusOrderItem->getDiscountAmountFullAggregation() + $orderItem->getDiscountAmountFullAggregation());
         }
 
-        // TODO: send to octopus;
+        $octopusOrder = $this->octopusOrderMapper->mapOrderTransferToOctopusOrder($spySalesOrder);
+        $octopusOrder->setOrderItems($octopusOrderItems);
+
+        $octopusOrderRequest = new OctopusOrderRequestTransfer();
+
+        $octopusOrderRequest->setBody($octopusOrder);
+
+        $this->apiAdapter->sendRequest($octopusOrderRequest);
     }
 }

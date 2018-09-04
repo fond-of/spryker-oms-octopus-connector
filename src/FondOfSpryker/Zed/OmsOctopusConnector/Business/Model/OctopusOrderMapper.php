@@ -2,6 +2,9 @@
 
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
+use Generated\Shared\Transfer\OctopusOrderPaymentItemTransfer;
+use Generated\Shared\Transfer\OctopusOrderShipmentItemTransfer;
+use Generated\Shared\Transfer\OctopusOrderTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrder;
 use Spryker\Shared\Shipment\ShipmentConstants;
@@ -50,20 +53,20 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
      *
-     * @return string
+     * @return \Generated\Shared\Transfer\OctopusOrderTransfer
      */
-    public function mapSpySalesOrderToOctopusOrder(SpySalesOrder $spySalesOrder): array
+    public function mapSpySalesOrderToOctopusOrder(SpySalesOrder $spySalesOrder): OctopusOrderTransfer
     {
-        $octopusOrder = $this->getOctopusOrderHeaderBySpySalesOrder($spySalesOrder);
+        $octopusOrder = $this->mapOctopusOrderHeaderBySpySalesOrder($spySalesOrder);
 
-        $octopusOrder['billing_address'] = $this->octopusOrderAddressMapper
-            ->mapSpySalesOrderAddressToOctopusOrderAddress($spySalesOrder->getBillingAddress());
-        $octopusOrder['shipping_address'] = $this->octopusOrderAddressMapper
-            ->mapSpySalesOrderAddressToOctopusOrderAddress($spySalesOrder->getShippingAddress());
+        $octopusOrder->setBillingAddress($this->octopusOrderAddressMapper
+            ->mapSpySalesOrderAddressToOctopusOrderAddress($spySalesOrder->getBillingAddress()));
+        $octopusOrder->setShippingAddress($this->octopusOrderAddressMapper
+            ->mapSpySalesOrderAddressToOctopusOrderAddress($spySalesOrder->getShippingAddress()));
 
-        $octopusOrder['shipment_item'] = $this->getOctopusOrderShipmentItemBySpySalesOrder($spySalesOrder);
-        $octopusOrder['discount_items'] = $this->getOctopusOrderDiscountItemsBySpySalesOrder($spySalesOrder);
-        $octopusOrder['payment_item'] = $this->getOctopusOrderPaymentItemBySpySalesOrder($spySalesOrder);
+        $octopusOrder->setShipmentItem($this->getOctopusOrderShipmentItemBySpySalesOrder($spySalesOrder));
+        $octopusOrder->setDiscountItems($this->getOctopusOrderDiscountItemsBySpySalesOrder($spySalesOrder));
+        $octopusOrder->setPaymentItem($this->getOctopusOrderPaymentItemBySpySalesOrder($spySalesOrder));
 
         return $octopusOrder;
     }
@@ -71,27 +74,25 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderTransfer
      */
-    protected function getOctopusOrderHeaderBySpySalesOrder(SpySalesOrder $spySalesOrder): array
+    protected function mapOctopusOrderHeaderBySpySalesOrder(SpySalesOrder $spySalesOrder): OctopusOrderTransfer
     {
-        $octopusOrderHeader = [];
+        $octopusOrderHeader = new OctopusOrderTransfer();
 
-        $octopusOrderHeader['test'] = $spySalesOrder->getIsTest();
-        $octopusOrderHeader['is_test'] = $spySalesOrder->getIsTest();
-        $octopusOrderHeader['created_at'] = $spySalesOrder->getCreatedAt();
-        $octopusOrderHeader['updated_at'] = $spySalesOrder->getUpdatedAt();
-        $octopusOrderHeader['id_sales_order'] = $spySalesOrder->getIdSalesOrder();
-        $octopusOrderHeader['customer_reference'] = $spySalesOrder->getCustomerReference();
-        $octopusOrderHeader['order_reference'] = $spySalesOrder->getOrderReference();
-        $octopusOrderHeader['currency_iso_code'] = $spySalesOrder->getCurrencyIsoCode();
-        $octopusOrderHeader['language_code'] = $spySalesOrder->getLocale()->getLocaleName();
-        $octopusOrderHeader['price_mode'] = $spySalesOrder->getPriceMode();
-        $octopusOrderHeader['store'] = $spySalesOrder->getStore();
-        $octopusOrderHeader['email'] = $spySalesOrder->getEmail();
-        $octopusOrderHeader['salutation'] = $spySalesOrder->getSalutation();
-        $octopusOrderHeader['first_name'] = $spySalesOrder->getFirstName();
-        $octopusOrderHeader['last_name'] = $spySalesOrder->getLastName();
+        $octopusOrderHeader->setTest($spySalesOrder->getIsTest());
+        $octopusOrderHeader->setCreatedAt($spySalesOrder->getCreatedAt());
+        $octopusOrderHeader->setIdSalesOrder($spySalesOrder->getIdSalesOrder());
+        $octopusOrderHeader->setCustomerReference($spySalesOrder->getCustomerReference());
+        $octopusOrderHeader->setOrderReference($spySalesOrder->getOrderReference());
+        $octopusOrderHeader->setCurrencyIsoCode($spySalesOrder->getCurrencyIsoCode());
+        $octopusOrderHeader->setLanguageCode($spySalesOrder->getLocale()->getLocaleName());
+        $octopusOrderHeader->setPriceMode($spySalesOrder->getPriceMode());
+        $octopusOrderHeader->setStore($spySalesOrder->getStore());
+        $octopusOrderHeader->setEmail($spySalesOrder->getEmail());
+        $octopusOrderHeader->setSalutation($spySalesOrder->getSalutation());
+        $octopusOrderHeader->setFirstName($spySalesOrder->getFirstName());
+        $octopusOrderHeader->setLastName($spySalesOrder->getLastName());
 
 
         return $octopusOrderHeader;
@@ -100,24 +101,25 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderShipmentItemTransfer
      */
-    protected function getOctopusOrderShipmentItemBySpySalesOrder(SpySalesOrder $spySalesOrder): array
-    {
+    protected function getOctopusOrderShipmentItemBySpySalesOrder(
+        SpySalesOrder $spySalesOrder
+    ): OctopusOrderShipmentItemTransfer {
         foreach ($spySalesOrder->getExpenses() as $spySalesExpense) {
             if ($spySalesExpense->getType() !== ShipmentConstants::SHIPMENT_EXPENSE_TYPE) {
                 continue;
             }
 
             return $this->octopusOrderShipmentItemMapper
-                        ->mapSpySalesExpenseToOctopusOrderShipmentItem($spySalesExpense);
+                ->mapSpySalesExpenseToOctopusOrderShipmentItem($spySalesExpense);
         }
     }
 
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderDiscountItemTransfer[]
      */
     protected function getOctopusOrderDiscountItemsBySpySalesOrder(SpySalesOrder $spySalesOrder): array
     {
@@ -134,10 +136,11 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\OctopusOrderPaymentItemTransfer
      */
-    protected function getOctopusOrderPaymentItemBySpySalesOrder(SpySalesOrder $spySalesOrder): array
-    {
+    protected function getOctopusOrderPaymentItemBySpySalesOrder(
+        SpySalesOrder $spySalesOrder
+    ): OctopusOrderPaymentItemTransfer {
         $spySalesPayment = $spySalesOrder->getOrdersJoinSalesPaymentMethodType()->getFirst();
 
         return $this->octopusOrderPaymentItemMapper->mapSpySalesPaymentToOctopusOrderPaymentItem($spySalesPayment);
@@ -147,11 +150,97 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
     /**
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
-     * @return string
+     * @return \Generated\Shared\Transfer\OctopusOrderTransfer
      */
-    public function mapOrderTransferToOctopusOrder(OrderTransfer $orderTransfer): array
+    public function mapOrderTransferToOctopusOrder(OrderTransfer $orderTransfer): OctopusOrderTransfer
     {
-        $orderTransfer->getPayments();
-        return [];
+        $octopusOrder = $this->mapOctopusOrderHeaderByOrderTransfer($orderTransfer);
+
+        $octopusOrder->setBillingAddress($this->octopusOrderAddressMapper
+            ->mapAddressTransferToOctopusOrderAddress($orderTransfer->getBillingAddress()));
+        $octopusOrder->setShippingAddress($this->octopusOrderAddressMapper
+            ->mapAddressTransferToOctopusOrderAddress($orderTransfer->getShippingAddress()));
+
+        $octopusOrder->setShipmentItem($this->getOctopusOrderShipmentItemByOrderTransfer($orderTransfer));
+        $octopusOrder->setDiscountItems($this->getOctopusOrderDiscountItemsByOrderTransfer($orderTransfer));
+        $octopusOrder->setPaymentItem($this->getOctopusOrderPaymentItemByOrderTransfer($orderTransfer));
+
+
+        return $octopusOrder;
+    }
+
+    /**
+     * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\OctopusOrderTransfer
+     */
+    protected function mapOctopusOrderHeaderByOrderTransfer(OrderTransfer $orderTransfer): OctopusOrderTransfer
+    {
+        $octopusOrderHeader = new OctopusOrderTransfer();
+
+        $octopusOrderHeader->setTest($orderTransfer->getIsTest());
+        $octopusOrderHeader->setCreatedAt($orderTransfer->getCreatedAt());
+        $octopusOrderHeader->setIdSalesOrder($orderTransfer->getIdSalesOrder());
+        $octopusOrderHeader->setCustomerReference($orderTransfer->getCustomerReference());
+        $octopusOrderHeader->setOrderReference($orderTransfer->getOrderReference());
+        $octopusOrderHeader->setCurrencyIsoCode($orderTransfer->getCurrencyIsoCode());
+        $octopusOrderHeader->setLanguageCode($orderTransfer->getLocale()->getLocaleName());
+        $octopusOrderHeader->setPriceMode($orderTransfer->getPriceMode());
+        $octopusOrderHeader->setStore($orderTransfer->getStore());
+        $octopusOrderHeader->setEmail($orderTransfer->getEmail());
+        $octopusOrderHeader->setSalutation($orderTransfer->getSalutation());
+        $octopusOrderHeader->setFirstName($orderTransfer->getFirstName());
+        $octopusOrderHeader->setLastName($orderTransfer->getLastName());
+
+
+        return $octopusOrderHeader;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\OctopusOrderShipmentItemTransfer
+     */
+    protected function getOctopusOrderShipmentItemByOrderTransfer(
+        OrderTransfer $orderTransfer
+    ): OctopusOrderShipmentItemTransfer {
+        foreach ($orderTransfer->getExpenses() as $expenseTransfer) {
+            if ($expenseTransfer->getType() !== ShipmentConstants::SHIPMENT_EXPENSE_TYPE) {
+                continue;
+            }
+
+            return $this->octopusOrderShipmentItemMapper
+                ->mapExpenseTransferToOctopusOrderShipmentItem($expenseTransfer);
+        }
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\OctopusOrderDiscountItemTransfer[]
+     */
+    protected function getOctopusOrderDiscountItemsByOrderTransfer(OrderTransfer $orderTransfer): array
+    {
+        $octopusOrderDiscountItems = [];
+
+        foreach ($orderTransfer->getCalculatedDiscounts() as $calculatedDiscountTransfer) {
+            $octopusOrderDiscountItems[] = $this->octopusOrderDiscountItemMapper
+                ->mapCalculatedDiscountTransferToOctopusOrderDiscountItem($calculatedDiscountTransfer);
+        }
+
+        return $octopusOrderDiscountItems;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\OctopusOrderPaymentItemTransfer
+     */
+    protected function getOctopusOrderPaymentItemByOrderTransfer(
+        OrderTransfer $orderTransfer
+    ): OctopusOrderPaymentItemTransfer {
+        $paymentTransfer = $orderTransfer->getPayments()->offsetGet(0);
+
+        return $this->octopusOrderPaymentItemMapper->mapPaymentTransferToOctopusOrderPaymentItem($paymentTransfer);
     }
 }
