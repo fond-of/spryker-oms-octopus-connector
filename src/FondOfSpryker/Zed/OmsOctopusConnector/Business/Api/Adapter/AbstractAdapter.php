@@ -11,7 +11,7 @@ use Psr\Http\Message\StreamInterface;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Shared\Log\LoggerTrait;
 
-abstract class AbstractAdapter
+abstract class AbstractAdapter implements AdapterInterface
 {
     use LoggerTrait;
 
@@ -57,6 +57,13 @@ abstract class AbstractAdapter
      */
     public function sendRequest(AbstractTransfer $transfer): ?StreamInterface
     {
+        throw new \Exception($this->utilEncodingService->encodeJson($transfer->toArray()));
+        $this->getLogger()->info(sprintf(
+            'Before API request [%s]: %s',
+            $this->getUrl(),
+            $this->utilEncodingService->encodeJson($transfer->toArray())
+        ));
+
         if (!$this->canSendRequest()) {
             return null;
         }

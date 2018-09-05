@@ -37,6 +37,6 @@ class ExportOrderToOctopusConsole extends Console
     {
         $idSalesOrder = $input->getArgument(static::ARGUMENT_ORDER_ID);
 
-        $this->getFacade()->exportOrderToOctopus($idSalesOrder);
+        $this->getFacade()->exportOrderByIdSalesOrder($idSalesOrder);
     }
 }

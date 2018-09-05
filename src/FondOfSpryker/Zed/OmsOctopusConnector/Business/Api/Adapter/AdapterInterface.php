@@ -12,5 +12,5 @@ interface AdapterInterface
      *
      * @return \Psr\Http\Message\StreamInterface
      */
-    public function sendRequest(AbstractTransfer $request): StreamInterface;
+    public function sendRequest(AbstractTransfer $request): ?StreamInterface;
 }

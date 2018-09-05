@@ -2,6 +2,7 @@
 
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
+use ArrayObject;
 use FondOfSpryker\Zed\OmsOctopusConnector\Business\Api\Adapter\AdapterInterface;
 use FondOfSpryker\Zed\OmsOctopusConnector\Dependency\Facade\OmsOctopusConnectorToSalesInterface;
 use Generated\Shared\Transfer\OctopusOrderRequestTransfer;
@@ -96,29 +97,30 @@ class OrderExporter implements OrderExporterInterface
     {
         $orderTransfer = $this->salesFacade->getOrderByIdSalesOrder($idSalesOrder);
 
-        $octopusOrderItems = [];
+        $octopusOrderItems = new ArrayObject();
         $groupKeyItemMapping = [];
 
         foreach ($orderTransfer->getItems() as $orderItem) {
             if (!\array_key_exists($orderItem->getGroupKey(), $groupKeyItemMapping)) {
-                $octopusOrderItems[] = $this->octopusOrderItemMapper
-                    ->mapSpySalesOrderItemEntityToOctopusOrderItem($orderItem);
+                $octopusOrderItems->append($this->octopusOrderItemMapper
+                    ->mapItemTransferToOctopusOrderItem($orderItem));
 
                 $groupKeyItemMapping[$orderItem->getGroupKey()] = count($octopusOrderItems) - 1;
 
                 continue;
             }
 
-            $octopusOrderItem = $octopusOrderItems[$groupKeyItemMapping[$orderItem->getGroupKey()]];
+            /** @var \Generated\Shared\Transfer\OctopusOrderItemTransfer $octopusOrderItem */
+            $octopusOrderItem = $octopusOrderItems->offsetGet($groupKeyItemMapping[$orderItem->getGroupKey()]);
 
             $octopusOrderItem->setQuantity($octopusOrderItem->getQuantity() + $orderItem->getQuantity());
-            $octopusOrderItem->setSubtotalAggregation($octopusOrderItem->getSubtotalAggregation() + $orderItem->getSubtotalAggregation());
-            $octopusOrderItem->setTaxAmountFullAggregation($octopusOrderItem->getTaxAmountFullAggregation() + $orderItem->getTaxAmountFullAggregation());
-            $octopusOrderItem->setPriceToPayAggregation($octopusOrderItem->getPriceToPayAggregation() + $orderItem->getPriceToPayAggregation());
-            $octopusOrderItem->setDiscountAmountFullAggregation($octopusOrderItem->getDiscountAmountFullAggregation() + $orderItem->getDiscountAmountFullAggregation());
+            $octopusOrderItem->setSubtotalAggregation($octopusOrderItem->getSubtotalAggregation() + $orderItem->getUnitSubtotalAggregation());
+            $octopusOrderItem->setTaxAmountFullAggregation($octopusOrderItem->getTaxAmountFullAggregation() + $orderItem->getUnitTaxAmountFullAggregation());
+            $octopusOrderItem->setPriceToPayAggregation($octopusOrderItem->getPriceToPayAggregation() + $orderItem->getUnitPriceToPayAggregation());
+            $octopusOrderItem->setDiscountAmountFullAggregation($octopusOrderItem->getDiscountAmountFullAggregation() + $orderItem->getUnitDiscountAmountFullAggregation());
         }
 
-        $octopusOrder = $this->octopusOrderMapper->mapOrderTransferToOctopusOrder($spySalesOrder);
+        $octopusOrder = $this->octopusOrderMapper->mapOrderTransferToOctopusOrder($orderTransfer);
         $octopusOrder->setOrderItems($octopusOrderItems);
 
         $octopusOrderRequest = new OctopusOrderRequestTransfer();

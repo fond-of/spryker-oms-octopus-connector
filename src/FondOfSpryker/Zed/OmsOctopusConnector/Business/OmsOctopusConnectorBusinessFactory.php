@@ -52,7 +52,8 @@ class OmsOctopusConnectorBusinessFactory extends AbstractBusinessFactory
         return new OrderExporter(
             $this->getSalesFacade(),
             $this->createOctopusOrderMapper(),
-            $this->createOctopusOrderItemMapper()
+            $this->createOctopusOrderItemMapper(),
+            $this->createOctopusOrderApiAdapter()
         );
     }
 

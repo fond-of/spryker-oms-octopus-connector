@@ -20,6 +20,7 @@ class OmsOctopusConnectorDependencyProvider extends AbstractBundleDependencyProv
     public function provideBusinessLayerDependencies(Container $container): Container
     {
         $this->addSalesFacade($container);
+        $this->addUtilEncodingService($container);
 
         return $container;
     }
@@ -50,6 +51,7 @@ class OmsOctopusConnectorDependencyProvider extends AbstractBundleDependencyProv
                 $container->getLocator()->utilEncoding()->service()
             );
         };
+
         return $container;
     }
 }

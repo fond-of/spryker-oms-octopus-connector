@@ -2,6 +2,7 @@
 
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
+use ArrayObject;
 use Generated\Shared\Transfer\OctopusOrderPaymentItemTransfer;
 use Generated\Shared\Transfer\OctopusOrderShipmentItemTransfer;
 use Generated\Shared\Transfer\OctopusOrderTransfer;
@@ -165,12 +166,11 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         $octopusOrder->setDiscountItems($this->getOctopusOrderDiscountItemsByOrderTransfer($orderTransfer));
         $octopusOrder->setPaymentItem($this->getOctopusOrderPaymentItemByOrderTransfer($orderTransfer));
 
-
         return $octopusOrder;
     }
 
     /**
-     * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $orderTransfer
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
      * @return \Generated\Shared\Transfer\OctopusOrderTransfer
      */
@@ -217,15 +217,21 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
     /**
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
-     * @return \Generated\Shared\Transfer\OctopusOrderDiscountItemTransfer[]
+     * @return \Generated\Shared\Transfer\OctopusOrderDiscountItemTransfer[]|\ArrayObject
      */
-    protected function getOctopusOrderDiscountItemsByOrderTransfer(OrderTransfer $orderTransfer): array
+    protected function getOctopusOrderDiscountItemsByOrderTransfer(OrderTransfer $orderTransfer): ArrayObject
     {
-        $octopusOrderDiscountItems = [];
+        $octopusOrderDiscountItems = new ArrayObject();
 
-        foreach ($orderTransfer->getCalculatedDiscounts() as $calculatedDiscountTransfer) {
-            $octopusOrderDiscountItems[] = $this->octopusOrderDiscountItemMapper
-                ->mapCalculatedDiscountTransferToOctopusOrderDiscountItem($calculatedDiscountTransfer);
+        foreach ($orderTransfer->getItems() as $orderItem) {
+            if ($orderItem->getCalculatedDiscounts()->count() === 0) {
+                continue;
+            }
+
+            foreach ($orderItem->getCalculatedDiscounts() as $calculatedDiscountTransfer) {
+                $octopusOrderDiscountItems->append($this->octopusOrderDiscountItemMapper
+                    ->mapCalculatedDiscountTransferToOctopusOrderDiscountItem($calculatedDiscountTransfer));
+            }
         }
 
         return $octopusOrderDiscountItems;
