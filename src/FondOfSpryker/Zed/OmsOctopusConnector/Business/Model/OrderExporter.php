@@ -56,13 +56,13 @@ class OrderExporter implements OrderExporterInterface
      */
     public function export(SpySalesOrder $spySalesOrder, array $spySalesOrderItems): void
     {
-        $octopusOrderItems = [];
+        $octopusOrderItems = new ArrayObject();
         $groupKeyItemMapping = [];
 
         foreach ($spySalesOrderItems as $orderItem) {
             if (!\array_key_exists($orderItem->getGroupKey(), $groupKeyItemMapping)) {
-                $octopusOrderItems[] = $this->octopusOrderItemMapper
-                    ->mapSpySalesOrderItemEntityToOctopusOrderItem($orderItem);
+                $octopusOrderItems->append($this->octopusOrderItemMapper
+                    ->mapSpySalesOrderItemEntityToOctopusOrderItem($orderItem));
 
                 $groupKeyItemMapping[$orderItem->getGroupKey()] = count($octopusOrderItems) - 1;
 
