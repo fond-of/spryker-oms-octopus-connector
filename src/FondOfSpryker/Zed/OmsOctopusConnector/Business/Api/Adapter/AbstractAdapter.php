@@ -57,7 +57,6 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function sendRequest(AbstractTransfer $transfer): ?StreamInterface
     {
-        throw new \Exception($this->utilEncodingService->encodeJson($transfer->toArray()));
         $this->getLogger()->info(sprintf(
             'Before API request [%s]: %s',
             $this->getUrl(),
