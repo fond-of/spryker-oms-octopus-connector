@@ -26,7 +26,6 @@ class OctopusOrderAddressMapper implements OctopusOrderAddressMapperInterface
         $octopusOrderAddress->setAddress1($spySalesOrderAddress->getAddress1());
         $octopusOrderAddress->setAddress2($spySalesOrderAddress->getAddress2());
         $octopusOrderAddress->setAddress3($spySalesOrderAddress->getAddress3());
-        $octopusOrderAddress->setAdditionalAddress($spySalesOrderAddress->getAdditionalAddress());
         $octopusOrderAddress->setCity($spySalesOrderAddress->getCity());
         $octopusOrderAddress->setZipCode($spySalesOrderAddress->getZipCode());
         $octopusOrderAddress->setPhone($spySalesOrderAddress->getPhone());
@@ -54,7 +53,6 @@ class OctopusOrderAddressMapper implements OctopusOrderAddressMapperInterface
         $octopusOrderAddress->setAddress1($addressTransfer->getAddress1());
         $octopusOrderAddress->setAddress2($addressTransfer->getAddress2());
         $octopusOrderAddress->setAddress3($addressTransfer->getAddress3());
-        $octopusOrderAddress->setAdditionalAddress($addressTransfer->getAdditionalAddress());
         $octopusOrderAddress->setCity($addressTransfer->getCity());
         $octopusOrderAddress->setZipCode($addressTransfer->getZipCode());
         $octopusOrderAddress->setPhone($addressTransfer->getPhone());
