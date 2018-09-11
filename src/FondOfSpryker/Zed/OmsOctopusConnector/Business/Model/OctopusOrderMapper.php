@@ -82,7 +82,7 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         $octopusOrderHeader = new OctopusOrderTransfer();
 
         $octopusOrderHeader->setTest($spySalesOrder->getIsTest());
-        $octopusOrderHeader->setCreatedAt($spySalesOrder->getCreatedAt());
+        $octopusOrderHeader->setCreatedAt($spySalesOrder->getCreatedAt()->format('Y-m-d H:i:s.u'));
         $octopusOrderHeader->setIdSalesOrder($spySalesOrder->getIdSalesOrder());
         $octopusOrderHeader->setCustomerReference($spySalesOrder->getCustomerReference());
         $octopusOrderHeader->setOrderReference($spySalesOrder->getOrderReference());
@@ -122,13 +122,15 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
      *
      * @return \Generated\Shared\Transfer\OctopusOrderDiscountItemTransfer[]
      */
-    protected function getOctopusOrderDiscountItemsBySpySalesOrder(SpySalesOrder $spySalesOrder): array
+    protected function getOctopusOrderDiscountItemsBySpySalesOrder(SpySalesOrder $spySalesOrder): ArrayObject
     {
-        $octopusOrderDiscountItems = [];
+        $octopusOrderDiscountItems = new ArrayObject();
 
         foreach ($spySalesOrder->getDiscounts() as $spySalesDiscount) {
-            $octopusOrderDiscountItems[] = $this->octopusOrderDiscountItemMapper
-                ->mapSpySalesDiscountToOctopusOrderDiscountItem($spySalesDiscount);
+            $octopusOrderDiscountItems->append(
+                $this->octopusOrderDiscountItemMapper
+                    ->mapSpySalesDiscountToOctopusOrderDiscountItem($spySalesDiscount)
+            );
         }
 
         return $octopusOrderDiscountItems;
