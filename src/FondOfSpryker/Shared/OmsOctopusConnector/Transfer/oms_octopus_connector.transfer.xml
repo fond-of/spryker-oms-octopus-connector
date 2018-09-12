@@ -28,6 +28,7 @@
         <property name="discountItems" type="OctopusOrderDiscountItem[]"/>
         <property name="shipmentItem" type="OctopusOrderShipmentItem"/>
         <property name="paymentItem" type="OctopusOrderPaymentItem"/>
+        <property name="orderTotal" type="OctopusOrderTotal"/>
     </transfer>
 
     <transfer name="OctopusOrderAddress">
@@ -94,5 +95,17 @@
     <transfer name="OctopusOrderPaymentMethodType">
         <property name="paymentProvider" type="string"/>
         <property name="paymentMethod" type="string"/>
+    </transfer>
+
+    <transfer name="OctopusOrderTotal">
+        <property name="createdAt" type="string" />
+        <property name="updatedAt" type="string" />
+        <property name="subTotal" type="int" />
+        <property name="orderExpenseTotal" type="int" />
+        <property name="discountTotal" type="int" />
+        <property name="grandTotal" type="int" />
+        <property name="refundTotal" type="int" />
+        <property name="canceledTotal" type="int" />
+        <property name="taxTotal" type="int" />
     </transfer>
 </transfers>

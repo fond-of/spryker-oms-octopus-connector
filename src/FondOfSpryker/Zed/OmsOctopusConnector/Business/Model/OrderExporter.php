@@ -79,6 +79,7 @@ class OrderExporter implements OrderExporterInterface
         }
 
         $octopusOrder = $this->octopusOrderMapper->mapSpySalesOrderToOctopusOrder($spySalesOrder);
+
         $octopusOrder->setOrderItems($octopusOrderItems);
 
         $octopusOrderRequest = new OctopusOrderRequestTransfer();

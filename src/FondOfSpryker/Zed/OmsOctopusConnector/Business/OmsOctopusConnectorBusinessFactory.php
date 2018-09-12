@@ -16,6 +16,8 @@ use FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderPaymentItem
 use FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderPaymentItemMapperInterface;
 use FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderShipmentItemMapper;
 use FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderShipmentItemMapperInterface;
+use FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderTotalMapper;
+use FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderTotalMapperInterface;
 use FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OrderExporter;
 use FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OrderExporterInterface;
 use FondOfSpryker\Zed\OmsOctopusConnector\Dependency\Facade\OmsOctopusConnectorToSalesInterface;
@@ -77,7 +79,8 @@ class OmsOctopusConnectorBusinessFactory extends AbstractBusinessFactory
             $this->createOctopusOrderAddressMapper(),
             $this->createOctopusOrderDiscountItemMapper(),
             $this->createOctopusOrderShipmentItemMapper(),
-            $this->createOctopusOrderPaymentItemMapper()
+            $this->createOctopusOrderPaymentItemMapper(),
+            $this->createOctopusOrderTotalMapper()
         );
     }
 
@@ -111,6 +114,14 @@ class OmsOctopusConnectorBusinessFactory extends AbstractBusinessFactory
     protected function createOctopusOrderPaymentItemMapper(): OctopusOrderPaymentItemMapperInterface
     {
         return new OctopusOrderPaymentItemMapper();
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderTotalMapperInterface
+     */
+    protected function createOctopusOrderTotalMapper(): OctopusOrderTotalMapperInterface
+    {
+        return new OctopusOrderTotalMapper();
     }
 
     /**
