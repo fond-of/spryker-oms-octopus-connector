@@ -3,12 +3,14 @@
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
 use ArrayObject;
+use FondOfSpryker\Shared\OmsOctopusConnector\OmsOctopusConnectorConstants;
 use Generated\Shared\Transfer\OctopusOrderPaymentItemTransfer;
 use Generated\Shared\Transfer\OctopusOrderShipmentItemTransfer;
 use Generated\Shared\Transfer\OctopusOrderTotalTransfer;
 use Generated\Shared\Transfer\OctopusOrderTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrder;
+use Spryker\Shared\Config\Config;
 use Spryker\Shared\Shipment\ShipmentConstants;
 
 class OctopusOrderMapper implements OctopusOrderMapperInterface
@@ -103,6 +105,7 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         $octopusOrderHeader->setSalutation($spySalesOrder->getSalutation());
         $octopusOrderHeader->setFirstName($spySalesOrder->getFirstName());
         $octopusOrderHeader->setLastName($spySalesOrder->getLastName());
+        $octopusOrderHeader->setSystemCode(Config::get(OmsOctopusConnectorConstants::SYSTEM_CODE));
 
 
         return $octopusOrderHeader;
@@ -203,6 +206,7 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         $octopusOrderHeader->setSalutation($orderTransfer->getSalutation());
         $octopusOrderHeader->setFirstName($orderTransfer->getFirstName());
         $octopusOrderHeader->setLastName($orderTransfer->getLastName());
+        $octopusOrderHeader->setSystemCode(Config::get(OmsOctopusConnectorConstants::SYSTEM_CODE));
 
 
         return $octopusOrderHeader;

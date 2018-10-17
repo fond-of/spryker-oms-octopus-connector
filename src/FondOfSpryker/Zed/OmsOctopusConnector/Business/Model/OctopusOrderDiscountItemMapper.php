@@ -17,7 +17,7 @@ class OctopusOrderDiscountItemMapper implements OctopusOrderDiscountItemMapperIn
         SpySalesDiscount $spySalesDiscount
     ): OctopusOrderDiscountItemTransfer {
         $octopusOrderDiscountItem = new OctopusOrderDiscountItemTransfer();
-
+        $octopusOrderDiscountItem->setCode($spySalesDiscount->getDiscountCodes()->getFirst()->getCode());
         $octopusOrderDiscountItem->setDescription($spySalesDiscount->getDescription());
         $octopusOrderDiscountItem->setDisplayName($spySalesDiscount->getDisplayName());
         $octopusOrderDiscountItem->setAmount($spySalesDiscount->getAmount());
@@ -34,7 +34,7 @@ class OctopusOrderDiscountItemMapper implements OctopusOrderDiscountItemMapperIn
         CalculatedDiscountTransfer $calculatedDiscountTransfer
     ): OctopusOrderDiscountItemTransfer {
         $octopusOrderDiscountItem = new OctopusOrderDiscountItemTransfer();
-
+        $octopusOrderDiscountItem->setCode($calculatedDiscountTransfer->getVoucherCode());
         $octopusOrderDiscountItem->setDescription($calculatedDiscountTransfer->getDescription());
         $octopusOrderDiscountItem->setDisplayName($calculatedDiscountTransfer->getDisplayName());
         $octopusOrderDiscountItem->setAmount($calculatedDiscountTransfer->getUnitAmount());

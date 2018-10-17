@@ -6,4 +6,5 @@ interface OmsOctopusConnectorConstants
 {
     public const API_ORDER_URL = 'API_ORDER_URL';
     public const EXPORT_ENABLED = 'EXPORT_ENABLED';
+    public const SYSTEM_CODE = 'SYSTEM_CODE';
 }

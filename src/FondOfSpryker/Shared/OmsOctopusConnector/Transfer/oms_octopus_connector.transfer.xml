@@ -29,6 +29,7 @@
         <property name="shipmentItem" type="OctopusOrderShipmentItem"/>
         <property name="paymentItem" type="OctopusOrderPaymentItem"/>
         <property name="orderTotal" type="OctopusOrderTotal"/>
+        <property name="systemCode" type="string"/>
     </transfer>
 
     <transfer name="OctopusOrderAddress">
@@ -69,6 +70,7 @@
     </transfer>
 
     <transfer name="OctopusOrderDiscountItem">
+        <property name="code" type="string"/>
         <property name="description" type="string"/>
         <property name="displayName" type="string"/>
         <property name="amount" type="int"/>
