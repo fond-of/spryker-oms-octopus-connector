@@ -13,9 +13,9 @@
     }
   ],
   "require": {
-    "php": ">=7.1",
-    "spryker/kernel": "^3.37.5",
-    "spryker/guzzle": "^2.2.0"
+    "php": ">=7.2",
+    "spryker/kernel": "^3.42.4",
+    "spryker/guzzle": "^2.2.1"
   },
   "require-dev": {
     "spryker/oms": "*",
