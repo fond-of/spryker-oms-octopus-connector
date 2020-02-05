@@ -60,7 +60,6 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         $this->octopusOrderTotalMapper = $octopusOrderTotalMapper;
     }
 
-
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
      *
@@ -106,7 +105,6 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         $octopusOrderHeader->setFirstName($spySalesOrder->getFirstName());
         $octopusOrderHeader->setLastName($spySalesOrder->getLastName());
         $octopusOrderHeader->setSystemCode(Config::get(OmsOctopusConnectorConstants::SYSTEM_CODE));
-
 
         return $octopusOrderHeader;
     }
@@ -161,7 +159,6 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         return $this->octopusOrderPaymentItemMapper->mapSpySalesPaymentToOctopusOrderPaymentItem($spySalesPayment);
     }
 
-
     /**
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
@@ -207,7 +204,6 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         $octopusOrderHeader->setFirstName($orderTransfer->getFirstName());
         $octopusOrderHeader->setLastName($orderTransfer->getLastName());
         $octopusOrderHeader->setSystemCode(Config::get(OmsOctopusConnectorConstants::SYSTEM_CODE));
-
 
         return $octopusOrderHeader;
     }
@@ -266,7 +262,6 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         return $this->octopusOrderPaymentItemMapper->mapPaymentTransferToOctopusOrderPaymentItem($paymentTransfer);
     }
 
-
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
      *
@@ -284,7 +279,7 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
      *
      * @return \Generated\Shared\Transfer\OctopusOrderTotalTransfer
      */
-    protected function getOctopusOrderTotalByOrderTransfer(OrderTransfer $orderTransfer) : OctopusOrderTotalTransfer
+    protected function getOctopusOrderTotalByOrderTransfer(OrderTransfer $orderTransfer): OctopusOrderTotalTransfer
     {
         return $this->octopusOrderTotalMapper->mapOrderTransferToOctopusOrderTotal($orderTransfer);
     }

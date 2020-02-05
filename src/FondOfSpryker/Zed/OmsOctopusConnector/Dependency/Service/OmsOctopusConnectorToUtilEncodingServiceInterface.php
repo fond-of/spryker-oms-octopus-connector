@@ -12,6 +12,7 @@ interface OmsOctopusConnectorToUtilEncodingServiceInterface
      * @return string|null
      */
     public function encodeJson($value, $options = null, $depth = null): ?string;
+
     /**
      * @param string $jsonValue
      * @param bool $assoc

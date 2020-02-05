@@ -12,8 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ExportOrderToOctopusConsole extends Console
 {
-    const COMMAND_NAME = 'oms-octopus-connector:order:export';
-    const ARGUMENT_ORDER_ID = 'order_id';
+    public const COMMAND_NAME = 'oms-octopus-connector:order:export';
+    public const ARGUMENT_ORDER_ID = 'order_id';
 
     /**
      * @return void

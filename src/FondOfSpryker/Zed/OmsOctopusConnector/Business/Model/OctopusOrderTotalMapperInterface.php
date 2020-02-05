@@ -4,7 +4,6 @@ namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
 use Generated\Shared\Transfer\OctopusOrderTotalTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
-use Generated\Shared\Transfer\TotalsTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrderTotals;
 
 interface OctopusOrderTotalMapperInterface
@@ -22,5 +21,4 @@ interface OctopusOrderTotalMapperInterface
      * @return \Generated\Shared\Transfer\OctopusOrderTotalTransfer
      */
     public function mapOrderTransferToOctopusOrderTotal(OrderTransfer $orderTransfer): OctopusOrderTotalTransfer;
-
 }

@@ -60,7 +60,7 @@ class OrderExporter implements OrderExporterInterface
         $groupKeyItemMapping = [];
 
         foreach ($spySalesOrderItems as $orderItem) {
-            if (!\array_key_exists($orderItem->getGroupKey(), $groupKeyItemMapping)) {
+            if (!array_key_exists($orderItem->getGroupKey(), $groupKeyItemMapping)) {
                 $octopusOrderItems->append($this->octopusOrderItemMapper
                     ->mapSpySalesOrderItemEntityToOctopusOrderItem($orderItem));
 
@@ -102,7 +102,7 @@ class OrderExporter implements OrderExporterInterface
         $groupKeyItemMapping = [];
 
         foreach ($orderTransfer->getItems() as $orderItem) {
-            if (!\array_key_exists($orderItem->getGroupKey(), $groupKeyItemMapping)) {
+            if (!array_key_exists($orderItem->getGroupKey(), $groupKeyItemMapping)) {
                 $octopusOrderItems->append($this->octopusOrderItemMapper
                     ->mapItemTransferToOctopusOrderItem($orderItem));
 

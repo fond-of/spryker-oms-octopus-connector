@@ -53,7 +53,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * @param \Spryker\Shared\Kernel\Transfer\AbstractTransfer $transfer
      *
-     * @return \Psr\Http\Message\StreamInterface
+     * @return \Psr\Http\Message\StreamInterface|null
      */
     public function sendRequest(AbstractTransfer $transfer): ?StreamInterface
     {
@@ -97,7 +97,7 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     protected function send(array $options = []): ResponseInterface
     {
-        $this->getLogger()->info(sprintf('API request [%s]: %s', $this->getUrl(),  $this->utilEncodingService->encodeJson($options)));
+        $this->getLogger()->info(sprintf('API request [%s]: %s', $this->getUrl(), $this->utilEncodingService->encodeJson($options)));
 
         $response = $this->client->post(
             $this->getUrl(),

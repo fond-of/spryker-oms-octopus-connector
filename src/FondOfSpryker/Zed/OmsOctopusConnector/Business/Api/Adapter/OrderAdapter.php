@@ -28,6 +28,8 @@ class OrderAdapter extends AbstractAdapter
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param \Spryker\Shared\Kernel\Transfer\AbstractTransfer $transfer
      *
+     * @throws \Exception
+     *
      * @return void
      */
     protected function handleResponse(ResponseInterface $response, AbstractTransfer $transfer): void

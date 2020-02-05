@@ -20,7 +20,6 @@ class OmsOctopusConnectorToSalesBridge implements OmsOctopusConnectorToSalesInte
         $this->salesFacade = $salesFacade;
     }
 
-
     /**
      * Specification:
      * - Returns the order for the given sales oder id.
