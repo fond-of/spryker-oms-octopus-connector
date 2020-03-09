@@ -50,7 +50,7 @@ class OrderExporter implements OrderExporterInterface
 
     /**
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrder $spySalesOrder
-     * @param array $spySalesOrderItems
+     * @param \Orm\Zed\Sales\Persistence\SpySalesOrderItem[] $spySalesOrderItems
      *
      * @return void
      */
@@ -77,7 +77,9 @@ class OrderExporter implements OrderExporterInterface
             $octopusOrderItem->setPriceToPayAggregation($octopusOrderItem->getPriceToPayAggregation() + $orderItem->getPriceToPayAggregation());
             $octopusOrderItem->setDiscountAmountFullAggregation($octopusOrderItem->getDiscountAmountFullAggregation() + $orderItem->getDiscountAmountFullAggregation());
         }
-
+        //ToDo SprykerUpgrade remove workaround!
+        $spySalesOrder->setShippingAddress($this->getShippingAddress($spySalesOrder, $spySalesOrderItems));
+        //ToDo End
         $octopusOrder = $this->octopusOrderMapper->mapSpySalesOrderToOctopusOrder($spySalesOrder);
 
         $octopusOrder->setOrderItems($octopusOrderItems);
@@ -87,6 +89,30 @@ class OrderExporter implements OrderExporterInterface
         $octopusOrderRequest->setBody($octopusOrder);
 
         $this->apiAdapter->sendRequest($octopusOrderRequest);
+    }
+
+    /**
+     * ToDo SprykerUpgrade its just a work around. Better implement logic for split order by shippingAddress but atm we have only one
+     * @param  \Orm\Zed\Sales\Persistence\SpySalesOrder  $spySalesOrder
+     * @param \Orm\Zed\Sales\Persistence\SpySalesOrderItem[] $spySalesOrderItems
+     *
+     * @return \Orm\Zed\Sales\Persistence\SpySalesOrderAddress|null
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    protected function getShippingAddress(SpySalesOrder $spySalesOrder, array $spySalesOrderItems)
+    {
+        if ($spySalesOrder->getShippingAddress() !== null){
+            return $spySalesOrder->getShippingAddress();
+        }
+
+        foreach ($spySalesOrderItems as $orderItem) {
+            $shipment = $orderItem->getSpySalesShipment();
+            if ($shipment !== null && $shipment->getSpySalesOrderAddress() !== null) {
+                return $shipment->getSpySalesOrderAddress();
+            }
+        }
+
+        return $spySalesOrder->getBillingAddress();
     }
 
     /**

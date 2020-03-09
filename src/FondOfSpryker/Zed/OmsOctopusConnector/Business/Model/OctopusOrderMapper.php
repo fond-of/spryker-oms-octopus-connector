@@ -16,6 +16,11 @@ use Spryker\Shared\Shipment\ShipmentConstants;
 class OctopusOrderMapper implements OctopusOrderMapperInterface
 {
     /**
+     * @see \Spryker\Shared\Shipment\ShipmentConfig::SHIPMENT_EXPENSE_TYPE|\Spryker\Shared\Shipment\ShipmentConstants::SHIPMENT_EXPENSE_TYPE
+     */
+    protected const SHIPMENT_EXPENSE_TYPE = 'SHIPMENT_EXPENSE_TYPE';
+
+    /**
      * @var \FondOfSpryker\Zed\OmsOctopusConnector\Business\Model\OctopusOrderAddressMapperInterface
      */
     protected $octopusOrderAddressMapper;
@@ -117,8 +122,20 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
     protected function getOctopusOrderShipmentItemBySpySalesOrder(
         SpySalesOrder $spySalesOrder
     ): OctopusOrderShipmentItemTransfer {
-        foreach ($spySalesOrder->getExpenses() as $spySalesExpense) {
-            if ($spySalesExpense->getType() !== ShipmentConstants::SHIPMENT_EXPENSE_TYPE) {
+        // ToDo SprykerUpgrade Workaround
+        $expanses = $spySalesOrder->getExpenses();
+
+        if ($expanses === null){
+            foreach ($spySalesOrder->getItems() as $orderItem){
+                if ($orderItem->getSpySalesShipment() !== null && $orderItem->getSpySalesShipment()->getExpense() !== null){
+                    $expanses = $orderItem->getSpySalesShipment()->getExpense();
+                    break;
+                }
+            }
+        }
+        //ToDo End
+        foreach ($expanses as $spySalesExpense) {
+            if ($spySalesExpense->getType() !== static::SHIPMENT_EXPENSE_TYPE) {
                 continue;
             }
 
@@ -170,8 +187,25 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
 
         $octopusOrder->setBillingAddress($this->octopusOrderAddressMapper
             ->mapAddressTransferToOctopusOrderAddress($orderTransfer->getBillingAddress()));
+
+        //ToDo SprykerUpgrade remove workaround!
+        $address = null;
+        foreach ($orderTransfer->getItems() as $itemTransfer) {
+            if ($address !== null) {
+                continue;
+            }
+            if ($itemTransfer !== null && $itemTransfer->getShipment() !== null && $itemTransfer->getShipment()->getShippingAddress() !== null){
+                $address = $itemTransfer->getShipment()->getShippingAddress();
+            }
+        }
+
+        if ($address === null && method_exists($orderTransfer, 'getShippingAddress')){
+            $address = $orderTransfer->getShippingAddress();
+        }
+        //End ToDo
+
         $octopusOrder->setShippingAddress($this->octopusOrderAddressMapper
-            ->mapAddressTransferToOctopusOrderAddress($orderTransfer->getShippingAddress()));
+            ->mapAddressTransferToOctopusOrderAddress($address));
 
         $octopusOrder->setShipmentItem($this->getOctopusOrderShipmentItemByOrderTransfer($orderTransfer));
         $octopusOrder->setDiscountItems($this->getOctopusOrderDiscountItemsByOrderTransfer($orderTransfer));
@@ -217,7 +251,7 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         OrderTransfer $orderTransfer
     ): OctopusOrderShipmentItemTransfer {
         foreach ($orderTransfer->getExpenses() as $expenseTransfer) {
-            if ($expenseTransfer->getType() !== ShipmentConstants::SHIPMENT_EXPENSE_TYPE) {
+            if ($expenseTransfer->getType() !== static::SHIPMENT_EXPENSE_TYPE) {
                 continue;
             }
 
