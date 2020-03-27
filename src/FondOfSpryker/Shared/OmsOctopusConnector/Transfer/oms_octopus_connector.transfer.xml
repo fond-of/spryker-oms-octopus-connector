@@ -93,7 +93,7 @@
         <property name="amount" type="int"/>
         <property name="salesPaymentMethodType" type="OctopusOrderPaymentMethodType"/>
         <property name="fees" type="OctopusOrderPaymentItemFee[]" singular="fee"/>
-        <property name="reference" type="string" />
+        <property name="transactionId" type="string" />
         <property name="customerName" type="string" />
         <property name="customerEmail" type="string" />
     </transfer>
