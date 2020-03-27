@@ -113,7 +113,9 @@ class OmsOctopusConnectorBusinessFactory extends AbstractBusinessFactory
      */
     protected function createOctopusOrderPaymentItemMapper(): OctopusOrderPaymentItemMapperInterface
     {
-        return new OctopusOrderPaymentItemMapper();
+        return new OctopusOrderPaymentItemMapper(
+            $this->getOctopusOrderPaymentItemTransferExpanderPlugins()
+        );
     }
 
     /**
@@ -130,5 +132,13 @@ class OmsOctopusConnectorBusinessFactory extends AbstractBusinessFactory
     protected function createOctopusOrderItemMapper(): OctopusOrderItemMapperInterface
     {
         return new OctopusOrderItemMapper();
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\OmsOctopusConnectorExtension\Dependency\Plugin\OctopusOrderPaymentItemTransferExpanderPluginInterface[]
+     */
+    public function getOctopusOrderPaymentItemTransferExpanderPlugins(): array
+    {
+        return $this->getProvidedDependency(OmsOctopusConnectorDependencyProvider::OCTOPUS_ORDER_PAYMENT_ITEM_TRANSFER_EXPANDER_PLUGINS);
     }
 }

@@ -12,6 +12,8 @@ class OmsOctopusConnectorDependencyProvider extends AbstractBundleDependencyProv
     public const FACADE_SALES = 'FACADE_SALES';
     public const UTIL_ENCODING_SERVICE = 'UTIL_ENCODING_SERVICE';
 
+    public const OCTOPUS_ORDER_PAYMENT_ITEM_TRANSFER_EXPANDER_PLUGINS = 'OCTOPUS_ORDER_PAYMENT_ITEM_TRANSFER_EXPANDER_PLUGINS';
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -19,8 +21,9 @@ class OmsOctopusConnectorDependencyProvider extends AbstractBundleDependencyProv
      */
     public function provideBusinessLayerDependencies(Container $container): Container
     {
-        $this->addSalesFacade($container);
-        $this->addUtilEncodingService($container);
+        $container = $this->addSalesFacade($container);
+        $container = $this->addUtilEncodingService($container);
+        $container = $this->addOctopusOrderPaymentItemTransferExpanderPlugins($container);
 
         return $container;
     }
@@ -53,5 +56,27 @@ class OmsOctopusConnectorDependencyProvider extends AbstractBundleDependencyProv
         };
 
         return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    public function addOctopusOrderPaymentItemTransferExpanderPlugins(Container $container): Container
+    {
+        $container[static::OCTOPUS_ORDER_PAYMENT_ITEM_TRANSFER_EXPANDER_PLUGINS] = function (Container $container) {
+            return $this->getOctopusOrderPaymentItemTransferExpanderPlugins();
+        };
+
+        return $container;
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\OmsOctopusConnectorExtension\Dependency\Plugin\OctopusOrderPaymentItemTransferExpanderPluginInterface[]
+     */
+    protected function getOctopusOrderPaymentItemTransferExpanderPlugins(): array
+    {
+        return [];
     }
 }
