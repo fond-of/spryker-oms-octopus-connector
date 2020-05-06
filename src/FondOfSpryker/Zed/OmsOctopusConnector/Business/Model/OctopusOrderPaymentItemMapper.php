@@ -2,11 +2,9 @@
 
 namespace FondOfSpryker\Zed\OmsOctopusConnector\Business\Model;
 
-use Faker\Provider\Payment;
 use Generated\Shared\Transfer\OctopusOrderPaymentItemTransfer;
 use Generated\Shared\Transfer\OctopusOrderPaymentMethodTypeTransfer;
 use Generated\Shared\Transfer\PaymentTransfer;
-use Generated\Shared\Transfer\PayonePaymentTransfer;
 use Orm\Zed\Payment\Persistence\SpySalesPayment;
 
 class OctopusOrderPaymentItemMapper implements OctopusOrderPaymentItemMapperInterface
@@ -26,7 +24,7 @@ class OctopusOrderPaymentItemMapper implements OctopusOrderPaymentItemMapperInte
     ) {
         $this->octopusOrderPaymentItemTransferExpanderPlugins = $octopusOrderPaymentItemTransferExpanderPlugins;
     }
-    
+
     /**
      * @param \Orm\Zed\Payment\Persistence\SpySalesPayment $spySalesPayment
      *
@@ -34,6 +32,9 @@ class OctopusOrderPaymentItemMapper implements OctopusOrderPaymentItemMapperInte
      */
     public function mapSpySalesPaymentToOctopusOrderPaymentItem(SpySalesPayment $spySalesPayment): OctopusOrderPaymentItemTransfer
     {
+        $spySalesOrder = $spySalesPayment->getSalesOrder();
+        $customerName = sprintf('%s %s', $spySalesOrder->getFirstName(), $spySalesOrder->getLastName());
+
         $octopusPaymentItem = new OctopusOrderPaymentItemTransfer();
         $octopusPaymentMethodType = new OctopusOrderPaymentMethodTypeTransfer();
 
@@ -44,16 +45,14 @@ class OctopusOrderPaymentItemMapper implements OctopusOrderPaymentItemMapperInte
         $octopusPaymentItem->setIdSalesPayment($spySalesPayment->getIdSalesPayment());
         $octopusPaymentItem->setAmount($spySalesPayment->getAmount());
         $octopusPaymentItem->setSalesPaymentMethodType($octopusPaymentMethodType);
-        $octopusPaymentItem->setCustomerName(
-            $spySalesPayment->getSalesOrder()->getFirstName(). ' ' .$spySalesPayment->getSalesOrder()->getLastName()
-        );
-        $octopusPaymentItem->setCustomerEmail($spySalesPayment->getSalesOrder()->getEmail());
+        $octopusPaymentItem->setCustomerName($customerName);
+        $octopusPaymentItem->setCustomerEmail($spySalesOrder->getEmail());
 
         $octopusPaymentItem = $this->expandOctopusOrderPaymentItemTransfer(
             $this->mapSpySalesPaymentToPaymentTransfer($spySalesPayment),
             $octopusPaymentItem
         );
-        
+
         return $octopusPaymentItem;
     }
 
@@ -67,7 +66,6 @@ class OctopusOrderPaymentItemMapper implements OctopusOrderPaymentItemMapperInte
         $octopusPaymentItem = new OctopusOrderPaymentItemTransfer();
         $octopusPaymentMethodType = new OctopusOrderPaymentMethodTypeTransfer();
 
-
         $octopusPaymentMethodType->setPaymentMethod($paymentTransfer->getPaymentMethod());
         $octopusPaymentMethodType->setPaymentProvider($paymentTransfer->getPaymentProvider());
 
@@ -75,7 +73,6 @@ class OctopusOrderPaymentItemMapper implements OctopusOrderPaymentItemMapperInte
         $octopusPaymentItem->setAmount($paymentTransfer->getAmount());
         $octopusPaymentItem->setSalesPaymentMethodType($octopusPaymentMethodType);
         $octopusPaymentItem = $this->expandOctopusOrderPaymentItemTransfer($octopusPaymentItem, $paymentTransfer);
-
 
         return $octopusPaymentItem;
     }
@@ -87,8 +84,8 @@ class OctopusOrderPaymentItemMapper implements OctopusOrderPaymentItemMapperInte
      */
     public function expandOctopusOrderPaymentItemTransfer(
         PaymentTransfer $paymentTransfer,
-        OctopusOrderPaymentItemTransfer $octopusOrderPaymentItemTransfer)
-    : OctopusOrderPaymentItemTransfer {
+        OctopusOrderPaymentItemTransfer $octopusOrderPaymentItemTransfer
+    ): OctopusOrderPaymentItemTransfer {
         foreach ($this->octopusOrderPaymentItemTransferExpanderPlugins as $octopusOrderPaymentItemTransferExpanderPlugin) {
             $octopusPaymentItem = $octopusOrderPaymentItemTransferExpanderPlugin
                 ->expandOctopusOrderPaymentItemTransfer($octopusOrderPaymentItemTransfer, $paymentTransfer);
@@ -110,5 +107,4 @@ class OctopusOrderPaymentItemMapper implements OctopusOrderPaymentItemMapperInte
 
         return $paymentTransfer;
     }
-
 }
