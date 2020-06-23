@@ -11,7 +11,7 @@ use Generated\Shared\Transfer\OctopusOrderTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Orm\Zed\Sales\Persistence\SpySalesOrder;
 use Spryker\Shared\Config\Config;
-use Spryker\Shared\Shipment\ShipmentConstants;
+use Spryker\Shared\Shipment\ShipmentConfig;
 
 class OctopusOrderMapper implements OctopusOrderMapperInterface
 {
@@ -120,7 +120,7 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         SpySalesOrder $spySalesOrder
     ): OctopusOrderShipmentItemTransfer {
         foreach ($spySalesOrder->getExpenses() as $spySalesExpense) {
-            if ($spySalesExpense->getType() !== ShipmentConstants::SHIPMENT_EXPENSE_TYPE) {
+            if ($spySalesExpense->getType() !== ShipmentConfig::SHIPMENT_EXPENSE_TYPE) {
                 continue;
             }
 
@@ -221,7 +221,7 @@ class OctopusOrderMapper implements OctopusOrderMapperInterface
         OrderTransfer $orderTransfer
     ): OctopusOrderShipmentItemTransfer {
         foreach ($orderTransfer->getExpenses() as $expenseTransfer) {
-            if ($expenseTransfer->getType() !== ShipmentConstants::SHIPMENT_EXPENSE_TYPE) {
+            if ($expenseTransfer->getType() !== ShipmentConfig::SHIPMENT_EXPENSE_TYPE) {
                 continue;
             }
 
